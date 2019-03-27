@@ -1,14 +1,4 @@
 {
-  "main.css": "/trello_board_bot/static/css/main.082a600e.chunk.css",
-  "main.js": "/trello_board_bot/static/js/main.0ea1edef.chunk.js",
-  "main.js.map": "/trello_board_bot/static/js/main.0ea1edef.chunk.js.map",
-  "runtime~main.js": "/trello_board_bot/static/js/runtime~main.9d617c64.js",
-  "runtime~main.js.map": "/trello_board_bot/static/js/runtime~main.9d617c64.js.map",
-  "static/js/2.b934461c.chunk.js": "/trello_board_bot/static/js/2.b934461c.chunk.js",
-  "static/js/2.b934461c.chunk.js.map": "/trello_board_bot/static/js/2.b934461c.chunk.js.map",
-  "index.html": "/trello_board_bot/index.html",
-  "precache-manifest.b5a4260b47b78979764305d51ab25bd9.js": "/trello_board_bot/precache-manifest.b5a4260b47b78979764305d51ab25bd9.js",
-  "service-worker.js": "/trello_board_bot/service-worker.js",
-  "static/css/main.082a600e.chunk.css.map": "/trello_board_bot/static/css/main.082a600e.chunk.css.map",
-  "static/media/logo.svg": "/trello_board_bot/static/media/logo.5d5d9eef.svg"
+  "main.js": "static/js/main.79986b66.js",
+  "main.js.map": "static/js/main.79986b66.js.map"
 }
