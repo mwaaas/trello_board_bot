@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleLocalSettings">
+    <option name="projectSyncType">
+      <map>
+        <entry key="$USER_HOME$/IdeaProjects/EventBusProjects" value="PREVIEW" />
+        <entry key="$USER_HOME$/IdeaProjects/EventBusProjects/EventBus" value="PREVIEW" />
+        <entry key="$USER_HOME$/IdeaProjects/EventBusProjects/EventBusExample" value="PREVIEW" />
+        <entry key="$USER_HOME$/IdeaProjects/SpringExamplesDiSetter" value="PREVIEW" />
+        <entry key="$USER_HOME$/IdeaProjects/eng-dts-service" value="PREVIEW" />
+        <entry key="$USER_HOME$/IdeaProjects/jmsDemo" value="PREVIEW" />
+        <entry key="$USER_HOME$/IdeaProjects/so-spring-boot-testprops" value="PREVIEW" />
+        <entry key="$USER_HOME$/IdeaProjects/turing" value="PREVIEW" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="width" value="1440" />
+    <option name="height" value="900" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="nodejs_interpreter_path" value="node" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>Python 2.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
