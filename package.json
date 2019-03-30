@@ -1,5 +1,5 @@
 {
-  "name": "my-power-up",
+  "name": "trello_board_bot",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -20,5 +20,5 @@
     "predeploy": "npm run build",
     "deploy": "firebase deploy"
   },
-  "homepage": "http://mwaaas.github.io/trello_board_bot"
+  "homepage": "./"
 }
