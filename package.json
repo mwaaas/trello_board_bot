@@ -1,34 +1,24 @@
 {
-  "name": "trello_board_bot",
+  "name": "my-power-up",
   "version": "0.1.0",
   "private": true,
-  "devDependencies": {
-    "gh-pages": "^2.0.1"
-  },
   "dependencies": {
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
-    "react-scripts": "2.1.8",
-    "styled-components": "^4.2.0",
     "react-router-dom": "^5.0.0",
+    "styled-components": "^4.2.0",
     "trello-react-scripts": "0.0.11"
+  },
+  "devDependencies": {
+    "gh-pages": "^2.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "predeploy": "yarn build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
-  "homepage" : "http://mwaaas.github.io/trello_board_bot"
+  "homepage": "http://mwaaas.github.io/trello_board_bot"
 }
