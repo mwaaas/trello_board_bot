@@ -132,35 +132,14 @@ var getBadges = function(t){
 };
 
 var boardButtonCallback = function(t){
-  return t.popup({
-    title: 'Popup List Example',
-    items: [
-      {
-        text: 'Open Overlay',
-        callback: function(t){
-          return t.overlay({
-            url: './overlay',
-            args: { rand: (Math.random() * 100).toFixed(0) }
-          })
-          .then(function(){
-            return t.closePopup();
-          });
-        }
-      },
-      {
-        text: 'Open Board Bar',
-        callback: function(t){
-          return t.boardBar({
-            url: './board-bar',
-            height: 200
-          })
-          .then(function(){
-            return t.closePopup();
-          });
-        }
-      }
-    ]
-  });
+  return t.modal({
+    url: './dashboard',
+    fullscreen: "False",
+    args: { rand: (Math.random() * 100).toFixed(0) }
+  })
+      .then(function(){
+        return t.closePopup();
+      });
 };
 
 var cardButtonCallback = function(t){
@@ -289,7 +268,7 @@ TrelloPowerUp.initialize({
       // we can either provide a button that has a callback function
       // that callback function should probably open a popup, overlay, or boardBar
       icon: WHITE_ICON,
-      text: 'Popup',
+      text: 'Mwaside Sync dashboard',
       callback: boardButtonCallback
     }, {
       // or we can also have a button that is just a simple url

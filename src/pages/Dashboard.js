@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import TrelloPowerUp from 'TrelloPowerUp';
 
-const Overlay = styled.div`
+const Dashboard = styled.div`
   background: rgba(0,0,0,.5);
   display: flex;
   align-items: center;
@@ -30,14 +30,14 @@ export default class OverlayPage extends Component {
     // close overlay if user clicks outside our content
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains('overlay')) {
-        t.closeOverlay().done();
+        t.closeModal().done();
       }
     });
 
     // close overlay if user presses escape key
     document.addEventListener('keyup', (e) => {
       if (e.keyCode === 27) {
-        t.closeOverlay().done();
+        t.closeModal().done();
       }
     });
 
@@ -45,7 +45,7 @@ export default class OverlayPage extends Component {
 
   render() {
     return (
-      <Overlay className="overlay">
+      <Dashboard className="overlay">
         <Content>
           <h2>Tips for using t.overlay()</h2>
           <hr />
@@ -56,7 +56,7 @@ export default class OverlayPage extends Component {
             <li>Try to get your overlay to load and render as quickly as possible.</li>
           </ol>
         </Content>
-      </Overlay>
+      </Dashboard>
     );
   }
 }
