@@ -1,0 +1,113 @@
+.icon {
+	background-image: url(/static/media/icons.56098342.png);
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+}
+.icon--sm {
+	height: 22px;
+	margin-left: 3px;
+	margin-right: 3px;
+	width: 22px;
+	&.icon--trello {
+		background-position: -200px 0;
+	}
+	&.icon--bitbucket {
+		background-position: -200px -300px;
+	}
+	&.icon--wrike {
+		background-position: -200px -500px;
+	}
+	&.icon--jira {
+		background-position: -200px -600px;
+	}
+	&.icon--basecamp {
+		background-position: -200px -700px;
+	}
+	&.icon--planner {
+		background-position: -200px -800px;
+	}
+}
+.icon--sm.icon--github_old,
+.icon--sm.icon--ghe,
+.icon--sm.icon--github {
+	background-position: -200px -100px;
+}
+.icon--sm.icon--gitlabcom,
+.icon--sm.icon--gitlab {
+	background-position: -200px -200px;
+}
+.icon--sm.icon--asana_old,
+.icon--sm.icon--asana {
+	background-position: -200px -400px;
+}
+.icon--md {
+	height: 32px;
+	width: 32px;
+	&.icon--trello {
+		background-position: -100px 0;
+	}
+	&.icon--bitbucket {
+		background-position: -100px -300px;
+	}
+	&.icon--wrike {
+		background-position: -100px -500px;
+	}
+	&.icon--jira {
+		background-position: -100px -600px;
+	}
+	&.icon--basecamp {
+		background-position: -100px -700px;
+	}
+	&.icon--planner {
+		background-position: -100px -800px;
+	}
+}
+.icon--md.icon--github_old,
+.icon--md.icon--ghe,
+.icon--md.icon--github {
+	background-position: -100px -100px;
+}
+.icon--md.icon--gitlabcom,
+.icon--md.icon--gitlab {
+	background-position: -100px -200px;
+}
+.icon--md.icon--asana_old,
+.icon--md.icon--asana {
+	background-position: -100px -400px;
+}
+.icon--lg {
+	height: 64px;
+	width: 64px;
+	&.icon--trello {
+		background-position: 0 0;
+	}
+	&.icon--bitbucket {
+		background-position: 0 -300px;
+	}
+	&.icon--wrike {
+		background-position: 0 -500px;
+	}
+	&.icon--jira {
+		background-position: 0 -600px;
+	}
+	&.icon--basecamp {
+		background-position: 0 -700px;
+	}
+	&.icon--planner {
+		background-position: 0 -800px;
+	}
+}
+.icon--lg.icon--github_old,
+.icon--lg.icon--ghe,
+.icon--lg.icon--github {
+	background-position: 0 -100px;
+}
+.icon--lg.icon--gitlabcom,
+.icon--lg.icon--gitlab {
+	background-position: 0 -200px;
+}
+.icon--lg.icon--asana_old,
+.icon--lg.icon--asana {
+	background-position: 0 -400px;
+}
