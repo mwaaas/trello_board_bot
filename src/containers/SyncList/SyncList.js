@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
+import { List } from 'immutable';
+import { routes } from '../../consts';
 import {
     Title,
     Subheading,
@@ -21,43 +24,17 @@ const SyncItems = styled.div`
 `;
 
  class SyncList extends Component {
-     renderSyncs = () => {
-         const {
-             multiSyncList,
-             syncsByMultiSyncId
-         } = this.props;
+     static propTypes = {
+         isLoading: PropTypes.bool.isRequired,
+         linkList: PropTypes.instanceOf(List).isRequired,
+         multisyncList: PropTypes.instanceOf(List).isRequired,
+     };
 
-
-    if ( multiSyncList.isEmpty()) {
-      return (
-        <Card className="link-list link-list--empty text-center">
-          <Subheading>
-            Don't know where to start? Have a look at our { ' ' }
-            <Href
-              href="http://comming_soon"
-              data-test="header__btn--help"
-            >
-              User guide
-            </Href>.
-            <br />
-            Or get started by adding your first sync.
-          </Subheading>
-        </Card>
-      );
-    }
-
-    // return (
-    //   <div>
-    //     <MultisyncList
-    //       multisyncList={ multiSyncList }
-    //       syncsByMultisyncId={ syncsByMultiSyncId }
-    //     />
-    //   </div>
-    //
-    // );
-  };
      render() {
         const {
+            linkList,
+            multisyncList,
+            isLoading,
             userFullName
         } = this.props;
         return (
@@ -66,13 +43,23 @@ const SyncItems = styled.div`
                     <strong>Welcome</strong> { userFullName }!
                 </Title>
 
+                {linkList.isEmpty() && multisyncList.isEmpty() && !isLoading && (
+                    <Subheading>
+                        Don’t know where to start? Have a look at our { ' ' }
+                        <Href
+                            href={ routes.HELP_PATHS.UNITO_HELP_URL }
+                            data-test="header__btn--help"
+                        >
+                            User guide
+                        </Href>.
+                    </Subheading>
+                )
+                }
                 <SyncItems>
                     <Title type="h2">
                         Your syncs
                     </Title>
                 </SyncItems>
-
-                { this.renderSyncs() }
 
             </Content>
         );
@@ -82,7 +69,10 @@ const SyncItems = styled.div`
 
 
 const mapStateToProps = state => ({
-  userFullName: "Francis Mwangi"
+    userFullName: "Francis Mwangi",
+    isLoading: false,
+    linkList: List(),
+    multisyncList: List(),
 });
 
 const mapDispatchToProps = dispatch => ({
