@@ -1,0 +1,6 @@
+.toggle-button-bar {
+	margin: 0 5px;
+	.btn[disabled] {
+		background-color: rgba(0, 0, 0, 0.12);
+	}
+}

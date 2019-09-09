@@ -1,0 +1,12 @@
+.link-list--empty {
+	color: rgba(0, 0, 0, 0.54);
+}
+.link-list__delete-modal {
+	width: 550px;
+	.form-group {
+		margin-top: 2em;
+	}
+	.link-item__project {
+		max-width: 450px;
+	}
+}

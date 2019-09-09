@@ -4,6 +4,8 @@ import classnames from 'classnames';
 import styled from 'styled-components';
 
 import { color, fontSize, fontWeight } from '../../theme';
+import './Title.scss';
+
 
 const H1 = styled.h1`
   font-size: ${fontSize.h1};
@@ -92,7 +94,7 @@ export default class Title extends Component {
     type: 'h1',
     inverse: false,
     uppercase: false,
-  }
+  };
 
   render() {
     const {

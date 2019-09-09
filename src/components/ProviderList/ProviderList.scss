@@ -1,0 +1,11 @@
+.provider-list__item-modal {
+	.media-object {
+		max-width: 94px;
+	}
+	.fa-ul {
+		margin-left: 1.5em;
+		& > li {
+			line-height: 1.75;
+		}
+	}
+}

@@ -1,0 +1,19 @@
+.coworker-list-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  padding: 16px 0;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.coworker-list-item__user {
+  flex: 5;
+}
+
+.coworker-list-item__action {
+  flex: 1;
+  .btn {
+    width: 117px;
+  }
+}

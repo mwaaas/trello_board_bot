@@ -1,0 +1,30 @@
+.nav-tab-item {
+	font-weight: 400;
+	&::first-letter {
+		text-transform: uppercase;
+	}
+	&.active {
+		a {
+			box-shadow: 1px 1px 24px rgba(0, 0, 0, 0.12);
+		}
+	}
+	a {
+		color: #007dd2;
+	}
+}
+.nav-tab-item.nav-tab-item--no-click a,
+.nav-tab-item.nav-tab-item--no-click a:hover {
+	background-color: transparent;
+	color: rgba(0, 0, 0, 0.54);
+	cursor: default;
+}
+.nav {
+	.nav-tab-item {
+		& > a {
+			&:focus {
+				background: none;
+				outline: none;
+			}
+		}
+	}
+}

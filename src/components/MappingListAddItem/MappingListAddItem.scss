@@ -1,0 +1,10 @@
+.mapping-list-add-item {
+	align-items: center;
+	display: flex;
+	margin-bottom: 8px;
+	.btn {
+		cursor: default;
+		flex: 1;
+		opacity: 1;
+	}
+}

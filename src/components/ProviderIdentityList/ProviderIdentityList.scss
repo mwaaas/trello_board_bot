@@ -1,0 +1,12 @@
+.provider-identity-list {
+	display: inline-block;
+	list-style: none;
+	padding: 0;
+}
+.provider-identity-list--empty {
+	font-size: 12px;
+}
+.provider-identity-list__item {
+	display: inline-block;
+	margin-left: .5em;
+}

@@ -1,0 +1,43 @@
+.dropdown {
+	.dropdown-header {
+		color: rgba(0, 0, 0, 0.87);
+		font-size: 16px;
+		padding: .25rem 1.5rem;
+	}
+	.dropdown-menu {
+		padding: .75rem 0 1rem;
+		& > li {
+			& > a {
+				padding: .25rem 1.5rem;
+			}
+		}
+		.btn {
+			color: rgba(0, 0, 0, 0.87);
+			padding: 4px 18px;
+			text-align: left;
+			width: 100%;
+		}
+	}
+	.btn {
+		text-align: left;
+	}
+	.fa-fw {
+		margin-right: .25em;
+	}
+	.dropdown__item--message {
+		margin: 10px 0;
+		padding-top: 0;
+		padding-bottom: 0;
+		line-height: 1;
+	}
+}
+.dropdown .dropdown-menu .btn:active,
+.dropdown .dropdown-menu .btn:hover {
+	background-color: #f5f5f5;
+	color: rgba(0, 0, 0, 0.87);
+	text-decoration: none;
+}
+.dropdown__btn {
+	color: rgba(0, 0, 0, 0.38);
+	padding: .5rem 1rem;
+}

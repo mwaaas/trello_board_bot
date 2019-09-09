@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    "jsx-a11y"
+  ],
+  "rules": {
+        "jsx-a11y/no-autofocus": [ 2, {
+            "ignoreNonDOM": true
+        }]
+    }
+}

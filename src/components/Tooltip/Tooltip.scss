@@ -1,0 +1,25 @@
+.tooltip {
+	opacity: .9;
+	z-index: 9999;
+}
+.tooltip-inner {
+	line-height: 1.5;
+	max-width: 300px;
+	padding: 12px;
+	a {
+		color: white;
+		text-decoration: underline;
+		&:hover {
+			color: white;
+			text-decoration: underline;
+		}
+		&:active {
+			color: white;
+			text-decoration: underline;
+		}
+		&:focus {
+			color: white;
+			text-decoration: underline;
+		}
+	}
+}

@@ -1,0 +1,28 @@
+.task-number-prefix-add {
+	border-radius: 4px;
+	margin-bottom: .5em;
+	padding-bottom: .5em;
+	padding-top: .5em;
+	.help-block {
+		margin-bottom: 5px;
+		margin-top: 0;
+	}
+	.field-values-select {
+		display: inline-block;
+		margin-right: .5em;
+		max-width: 230px;
+		vertical-align: middle;
+		width: 230px;
+		.Select-option {
+			&::first-letter {
+				text-transform: capitalize;
+			}
+		}
+	}
+}
+.task-number-prefix-add__prefix {
+	display: inline-block;
+	margin-right: .5em;
+	max-width: 75px;
+	vertical-align: middle;
+}

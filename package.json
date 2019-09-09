@@ -43,6 +43,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "eslint": "^6.3.0",
     "gh-pages": "^2.0.1"
   },
   "scripts": {

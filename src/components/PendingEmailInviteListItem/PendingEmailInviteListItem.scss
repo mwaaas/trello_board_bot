@@ -1,0 +1,16 @@
+.pending-invite-list-item {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+	display: flex;
+	&:last-child {
+		border-bottom: none;
+	}
+}
+.pending-invite-list-item__user {
+	flex: 5;
+}
+.pending-invite-list-item__action {
+	flex: 1;
+	.btn {
+		width: 155px;
+	}
+}

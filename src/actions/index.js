@@ -17,12 +17,12 @@ import * as containerActions from './containers';
 import * as flagActions from './flags';
 import * as fieldActions from './fields';
 // import * as inviteActions from './invites';
-// import * as linkActions from './links';
+import * as linkActions from './links';
 import * as mappingActions from './mapping';
-// import * as multisyncActions from './multisyncs';
+import * as multisyncActions from './multisyncs';
 import * as organizationActions from './organizations';
 import * as providerActions from './providers';
-// import * as providerIdentityActions from './providerIdentity';
+import * as providerIdentityActions from './providerIdentity';
 import * as trackingActions from './tracking';
 
 export {
@@ -33,11 +33,11 @@ export {
     flagActions,
     fieldActions,
     // inviteActions,
-    // linkActions,
+    linkActions,
     mappingActions,
-    // multisyncActions,
+    multisyncActions,
     organizationActions,
-    // providerIdentityActions,
+    providerIdentityActions,
     providerActions,
     trackingActions
 }

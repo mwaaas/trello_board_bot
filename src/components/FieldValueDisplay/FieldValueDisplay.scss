@@ -1,0 +1,142 @@
+.field-value-display {
+	border: 2px solid rgba(0, 0, 0, 0.12);
+	margin-bottom: 4px;
+	margin-left: 0;
+	margin-right: 0;
+	padding: .5em .5em .5em 1em;
+	.arrow-tail-1 {
+		top: 48px;
+		width: 5px;
+	}
+	.arrow-tail-2 {
+		height: 5px;
+		width: 32%;
+		z-index: 1;
+	}
+	&:hover {
+		border-color: #2ec16b;
+		.field-value-display__actions {
+			display: block;
+		}
+	}
+	.avatar {
+		margin-left: .25em;
+		padding: 0 4px;
+	}
+}
+.field-value-display .arrow-tail-1,
+.field-value-display .arrow-tail-2 {
+	background-color: #2ec16b;
+	display: none;
+	position: absolute;
+}
+.field-value-display:hover .arrow-tail-1,
+.field-value-display:hover .arrow-tail-2 {
+	display: inline-block;
+}
+.field-value-display__name {
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.field-value-display__color {
+	border-radius: 50%;
+	display: inline-block;
+	height: 12px;
+	margin-left: .5em;
+	width: 12px;
+}
+.field-value-display__actions {
+	display: none;
+	float: right;
+	a {
+		color: rgba(0, 0, 0, 0.54);
+		font-size: 16px;
+		line-height: 1.25;
+	}
+}
+.field-value-display__make-default {
+	&:hover {
+		color: #2ec16b;
+	}
+	&:active {
+		.fa {
+			&::before {
+				color: #2ec16b;
+			}
+		}
+	}
+}
+.field-value-display__unmap {
+	&:hover {
+		color: #ee0140;
+	}
+	&:active {
+		.fa {
+			&::before {
+				color: #a2012c;
+			}
+		}
+	}
+}
+.field-value-display--A .arrow-tail-1,
+.field-value-display--A .arrow-tail-2 {
+	right: -40%;
+}
+.field-value-display--A {
+	.arrow-tail-1 {
+		height: 46px;
+	}
+}
+.field-value-display--B .arrow-tail-1,
+.field-value-display--B .arrow-tail-2 {
+	left: -40%;
+}
+.field-values-group {
+	padding: 2em 1em;
+	position: relative;
+	&.field-values-group--empty {
+		.field-values-group__add {
+			display: block;
+		}
+	}
+	.fa-long-arrow-left {
+		right: -45px;
+	}
+	.fa-long-arrow-right {
+		left: -45px;
+	}
+}
+.field-values-group .fa-long-arrow-left,
+.field-values-group .fa-long-arrow-right {
+	color: rgba(0, 0, 0, 0.12);
+	font-size: 2.5em;
+	position: absolute;
+	top: 31px;
+}
+.field-values-group__add {
+	display: none;
+}
+.field-values-group--A {
+	.field-value-display {
+		&:hover {
+			& ~ .fa-long-arrow-left {
+				display: none;
+			}
+		}
+	}
+}
+.field-values-group--B {
+	.field-value-display {
+		&:hover {
+			& ~ .fa-long-arrow-right {
+				display: none;
+			}
+		}
+	}
+}
+.field-values-group--is-active .fa-long-arrow-left,
+.field-values-group--is-active .fa-long-arrow-right {
+	color: #2ec16b;
+}

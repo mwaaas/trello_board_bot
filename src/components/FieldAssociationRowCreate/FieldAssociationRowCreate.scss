@@ -1,0 +1,31 @@
+.field-association-row-create {
+	position: relative;
+	&:hover {
+		border-radius: 4px 0 0 4px;
+		.field-association-row-create__clear {
+			visibility: visible;
+		}
+	}
+}
+.field-association-row-create__divider {
+	color: rgba(0, 0, 0, 0.38);
+	flex: 2;
+	font-size: 1.1em;
+	text-align: center;
+}
+.field-association-row-create__actions {
+	position: absolute;
+	right: -36px;
+	top: 50%;
+	.field-association-row-create__clear {
+		color: rgba(0, 0, 0, 0.38);
+		height: 38px;
+		padding: 0;
+		visibility: hidden;
+		width: 38px;
+	}
+}
+.field-association-row-create__actions .field-association-row-create__clear:active,
+.field-association-row-create__actions .field-association-row-create__clear:hover {
+	color: #ee0140;
+}
