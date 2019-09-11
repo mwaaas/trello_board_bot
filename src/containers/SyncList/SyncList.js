@@ -15,6 +15,10 @@ import {
     MultisyncList
 } from '../../components'
 
+import {
+  getSortedMultisyncs,
+} from '../../reducers';
+
 const Content = styled.div`
   background: white;
   min-height: calc(100vh - 66px);
@@ -25,14 +29,20 @@ const SyncItems = styled.div`
   margin-top: 3em;
 `;
 
- class SyncList extends Component {
+class SyncList extends Component {
      static propTypes = {
          embedName: PropTypes.string.isRequired,
+         getLinks: PropTypes.func.isRequired,
+         isSiteAdmin: PropTypes.bool,
          isLoading: PropTypes.bool.isRequired,
          linkList: PropTypes.instanceOf(List).isRequired,
          multisyncList: PropTypes.instanceOf(List).isRequired,
-         isSiteAdmin: PropTypes.bool,
+         orgAccountIsSuspended: PropTypes.bool.isRequired,
          userId: PropTypes.string.isRequired,
+     };
+
+     static defaultProps = {
+         isSiteAdmin: false,
      };
 
      renderSyncs = () => {
@@ -138,7 +148,7 @@ const mapStateToProps = state => ({
     userFullName: "Francis Mwangi",
     isLoading: false,
     linkList: List(),
-    multisyncList: List(),
+    multisyncList: getSortedMultisyncs(state),
     userId: "mwaside",
     isSiteAdmin: false,
     syncsByMultisyncId: "213",

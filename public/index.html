@@ -29,5 +29,30 @@
       To begin the development, run `npm start`.
       To create a production bundle, use `npm run build`.
     -->
+    <script>
+        ! function() {
+            var n = window.analytics = window.analytics || [];
+            if (!n.initialize)
+                if (n.invoked) window.console && console.error && console.error("Segment snippet included twice.");
+                else {
+                    n.invoked = !0, n.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "page", "once", "off", "on"], n.factory = function(e) {
+                        return function() {
+                            var t = Array.prototype.slice.call(arguments);
+                            return t.unshift(e), n.push(t), n
+                        }
+                    };
+                    for (var t = 0; t < n.methods.length; t++) {
+                        var e = n.methods[t];
+                        n[e] = n.factory(e)
+                    }
+                    n.load = function(t) {
+                        var e = document.createElement("script");
+                        e.type = "text/javascript", e.async = !0, e.src = ("https:" === document.location.protocol ? "https://" : "http://") + "cdn.segment.com/analytics.js/v1/" + t + "/analytics.min.js";
+                        var n = document.getElementsByTagName("script")[0];
+                        n.parentNode.insertBefore(e, n)
+                    }, n.SNIPPET_VERSION = "4.0.0"
+                }
+        }()
+    </script>
   </body>
 </html>

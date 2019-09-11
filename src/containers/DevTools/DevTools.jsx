@@ -17,8 +17,3 @@ export default createDevTools(
     <LogMonitor theme="monokai" />
   </DockMonitor>,
 );
-
-
-
-// WEBPACK FOOTER //
-// ./src/containers/DevTools/DevTools.jsx

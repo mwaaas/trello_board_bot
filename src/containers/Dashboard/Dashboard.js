@@ -25,6 +25,7 @@ export default class Dashboard extends Component {
           <Switch>
               <Route exact path={ `${match.path}/syncs` } component={ SyncList } />
               <Redirect exact from="/dashboard" to="/dashboard/syncs" />
+              <Redirect exact from="/" to="/dashboard/syncs" />
           </Switch>
       </div>
     );
