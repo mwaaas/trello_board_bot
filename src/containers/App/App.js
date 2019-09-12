@@ -41,6 +41,10 @@ class App extends Component {
     userPendingInvite: PropTypes.instanceOf(Map),
   };
 
+  state = {
+    displayParamErrorMsg: true,
+  };
+
   componentDidMount() {
     const { initialFetch, location, parseLocation } = this.props;
     const [, embed, providerName] = location.pathname.split('/');
@@ -55,7 +59,7 @@ class App extends Component {
     }
   }
 
-    componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.loadSegment(nextProps.segmentWriteKey);
   }
 

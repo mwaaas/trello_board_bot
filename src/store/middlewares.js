@@ -1,13 +1,28 @@
 import fetch from 'isomorphic-fetch';
-import {EventTypes} from 'redux-segment';
-import {addNotification as notify} from 'reapop';
+import {
+    EventTypes
+} from 'redux-segment';
+import {
+    addNotification as notify
+} from 'reapop';
 import cookie from 'react-cookie';
 import moment from 'moment';
 
-import {appActions} from '../actions';
-import {routes} from '../consts';
-import {getClientVersion, getEmbedName, getSessionId, getToken,} from '../reducers';
-import {logException} from '../utils';
+import {
+    appActions
+} from '../actions';
+import {
+    routes
+} from '../consts';
+import {
+    getEmbedName,
+    getClientVersion,
+    getToken,
+    getSessionId,
+} from '../reducers';
+import {
+    logException
+} from '../utils';
 
 
 export function callApi(endpoint, method, token, payload, clientVersion) {
@@ -20,7 +35,6 @@ export function callApi(endpoint, method, token, payload, clientVersion) {
             'Content-Type': 'application/json',
         },
         body: method !== routes.METHODS.GET ? JSON.stringify(payload) : undefined,
-        mode: 'no-cors',
     };
 
     if (token) {
@@ -30,7 +44,8 @@ export function callApi(endpoint, method, token, payload, clientVersion) {
     if (clientVersion) {
         options.headers['unito-client-app-version'] = clientVersion;
     }
-    return fetch(`https://app.unito.io/${routes.BASE_API}/${endpoint}`, options)
+
+   return fetch(`http://localhost:8080/${routes.BASE_API}/${endpoint}`, options)
         .then((response) => {
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.startsWith('application/json')) {
@@ -53,7 +68,7 @@ export function callApi(endpoint, method, token, payload, clientVersion) {
                     name: response.name,
                 })
             ));
-        });
+        })
 }
 
 export function callAPIMiddleware({
