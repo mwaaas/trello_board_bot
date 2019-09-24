@@ -19,6 +19,8 @@ import {
   getSortedMultisyncs,
 } from '../../reducers';
 
+import { linkActions, multisyncActions } from '../../actions';
+
 const Content = styled.div`
   background: white;
   min-height: calc(100vh - 66px);
@@ -41,7 +43,21 @@ class SyncList extends Component {
          userId: PropTypes.string.isRequired,
      };
 
-     static defaultProps = {
+     componentDidMount() {
+         const {
+             embedName,
+             selectedOrganizationId,
+             getLinks,
+             getMultisyncs,
+         } = this.props;
+         if (selectedOrganizationId) {
+             getLinks(embedName);
+             getMultisyncs(embedName);
+         }
+
+     }
+
+    static defaultProps = {
          isSiteAdmin: false,
      };
 
@@ -152,10 +168,25 @@ const mapStateToProps = state => ({
     userId: "mwaside",
     isSiteAdmin: false,
     syncsByMultisyncId: "213",
-    embedName: 'trello'
+    embedName: 'trello',
+    selectedOrganizationId: "mwaside"
 });
 
 const mapDispatchToProps = dispatch => ({
+  getLinks: (embedName) => {
+    if (embedName === 'trello') {
+      dispatch(linkActions.getContainerLinks());
+    } else {
+      dispatch(linkActions.getLinks());
+    }
+  },
+  getMultisyncs: (embedName) => {
+    if (embedName === 'trello') {
+      dispatch(multisyncActions.getContainerMultisyncs());
+    } else {
+      dispatch(multisyncActions.getMultisyncs());
+    }
+  },
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SyncList));

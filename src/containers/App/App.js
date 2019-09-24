@@ -18,6 +18,8 @@ import {
   providerActions,
 } from '../../actions';
 
+import { Loading } from '../../components'
+
 import {
   getIsLoadingFlags,
   getIsAuthenticated,
@@ -75,12 +77,14 @@ class App extends Component {
     }
   };
   render() {
+      const { history, isLoading, isAuthenticated } = this.props;
     return (
         <div className="content">
-          <Switch>
-            <Route path="/dashboard" component={DashBoard}/>
-            <Route path="/" component={DashBoard}/>
-          </Switch>
+            { isLoading && <Loading /> }
+            <Switch>
+                <Route path="/dashboard" component={DashBoard}/>
+                <Route path="/" component={DashBoard}/>
+            </Switch>
         </div>
     );
   }

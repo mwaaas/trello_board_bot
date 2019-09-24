@@ -6,8 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import ReactSelect from 'react-select';
-import Creatable from 'react-select/creatable';
+import ReactSelect, { Creatable } from 'react-select';
 
 
 import './Select.scss';

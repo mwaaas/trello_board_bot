@@ -6,7 +6,15 @@ import { Route, Router, Switch } from 'react-router-dom';
 import NotificationsSystem from 'reapop';
 import theme from 'reapop-theme-wybo';
 
-import {App, DevTools} from '../../containers'
+import {
+    App,
+    AuthSetup,
+    Canvas,
+    DevTools,
+    EmbedLoginContainer,
+    LoginContainer,
+    SignupContainer,
+} from '../../containers'
 import {ScrollToTop} from '../../components'
 
 export default class Root extends Component {
@@ -29,8 +37,8 @@ export default class Root extends Component {
 
   render() {
     const customTheme = {
-      ...theme,
-      smallScreenMin: 400,
+        ...theme,
+        smallScreenMin: 400,
     };
 
     return (
@@ -40,6 +48,27 @@ export default class Root extends Component {
           <Router history={ this.props.history }>
             <div>
                 <ScrollToTop />
+                <Switch>
+                    <Route exact path="/embed/:embedName/login" component={ EmbedLoginContainer } />
+                    <Route
+                        path="/:method(login|signup)"
+                        render={({ match, ...rest }) => (
+                            <div>
+                                <Switch>
+                                    <Route
+                                        {...rest}
+                                        exact path={[match.path, `${match.path}/`]}
+                                        component={match.params.method === 'login' ? LoginContainer : SignupContainer}/>
+                                    <Route
+                                        {...rest}
+                                        path={[`${match.path}/:connectorName`, `${match.path}/:connectorName/`]}
+                                        component={AuthSetup}/>
+                                </Switch>
+                            </div>
+                        )}
+                />
+                <Route exact path="/canvas" component={ Canvas } />
+              </Switch>
                 <App />
             </div>
           </Router>

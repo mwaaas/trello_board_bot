@@ -257,13 +257,13 @@ class MapFields extends Component {
     );
   }
 }
-MapFields = reduxForm(MapFields, {
+MapFields = reduxForm({
   form: 'multisyncForm',
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
   validate,
   onSubmit,
-})
+})(MapFields);
 const mapStateToProps = (state) => {
   const rootProviderIdentityId = getFieldValue(state, 'root.providerIdentityId', 'multisyncForm');
   const leavesProviderIdentityId = getFieldValue(state, 'leaves.providerIdentityId', 'multisyncForm');

@@ -123,7 +123,7 @@ export const authenticate = payload => ({
         authTypes.AUTHENTICATE_USER_FAILURE,
     ],
     url: routes.API_PATHS.AUTHENTICATE,
-    displayError: false,
+    displayError: true,
 });
 
 export const testConnection = (providerName, {

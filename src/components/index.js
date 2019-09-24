@@ -105,6 +105,8 @@ export { default as  UserDisplaySelectValue } from './Select/UserDisplaySelectVa
 export { default as  UserSelectLoading } from './MappingList/UserSelectLoading';
 export { default as  ValidatedInput } from './ValidatedInput/ValidatedInput';
 export { default as  TextAreaInput } from './TextAreaInput/TextAreaInput';
+export { default as SelectProviderDropdown} from './SelectProviderDropdown/SelectProviderDropdown'
+export {default as ProviderIconWithLabel} from './ProviderIconWithLabel/ProviderIconWithLabel'
 
 
 

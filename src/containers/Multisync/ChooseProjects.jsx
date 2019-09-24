@@ -236,12 +236,12 @@ class ChooseProjects extends Component {
     );
   }
 }
-ChooseProjects = reduxForm(ChooseProjects, {
+ChooseProjects = reduxForm({
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
   form: 'multisyncForm',
   validate,
-});
+})(ChooseProjects);
 
 const mapStateToProps = state => ({
   isRootLocked: getIsSideLocked(state, { containerSide: 'A' }),

@@ -215,11 +215,11 @@ class Review extends Component {
     );
   }
 }
-Review = reduxForm(Review, {
+Review = reduxForm({
   form: 'multisyncForm',
   validate,
   destroyOnUnmount: false,
-});
+})(Review);
 
 const mapStateToProps = (state) => {
   const topology = getFieldValue(state, 'topology', 'multisyncForm');

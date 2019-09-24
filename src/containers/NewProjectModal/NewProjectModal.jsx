@@ -96,7 +96,7 @@ class NewProjectModal extends Component {
     );
   }
 }
-NewProjectModal = reduxForm(NewProjectModal, {
+NewProjectModal = reduxForm({
   form: 'newContainerForm',
   validate: (values) => {
     const errors = {};
@@ -109,7 +109,7 @@ NewProjectModal = reduxForm(NewProjectModal, {
     }
     return errors;
   },
-});
+})(NewProjectModal);
 
 const mapStateToProps = (state, ownProps) => ({
   provider: getProviderByProviderIdentityId(state, ownProps.providerIdentityId),

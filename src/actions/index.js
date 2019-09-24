@@ -12,11 +12,11 @@
 
 import * as appActions from './app';
 import * as authActions from './auth';
-// import * as billingActions from './billing';
+import * as billingActions from './billing';
 import * as containerActions from './containers';
 import * as flagActions from './flags';
 import * as fieldActions from './fields';
-// import * as inviteActions from './invites';
+import * as inviteActions from './invites';
 import * as linkActions from './links';
 import * as mappingActions from './mapping';
 import * as multisyncActions from './multisyncs';
@@ -28,11 +28,11 @@ import * as trackingActions from './tracking';
 export {
     appActions,
     authActions,
-    // billingActions,
+    billingActions,
     containerActions,
     flagActions,
     fieldActions,
-    // inviteActions,
+    inviteActions,
     linkActions,
     mappingActions,
     multisyncActions,

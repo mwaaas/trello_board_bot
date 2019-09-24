@@ -8,14 +8,14 @@ export default class UnitoLogo extends Component {
     color: PropTypes.oneOf(['transparent', 'color', 'green']),
     height: PropTypes.string,
     width: PropTypes.string,
-  }
+  };
 
   static defaultProps = {
     alignment: 'horizontal',
     color: 'color',
     height: 'auto',
     width: 'auto',
-  }
+  };
 
   getExtension = () => {
     const { color } = this.props;
@@ -29,7 +29,7 @@ export default class UnitoLogo extends Component {
         return 'png';
       }
     }
-  }
+  };
 
   render() {
     const {

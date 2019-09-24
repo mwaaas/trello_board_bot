@@ -23,3 +23,9 @@ export { default as FieldAssociationItem } from './FieldAssociationItem/FieldAss
 export { default as FieldAssociationValueMapping } from './FieldAssociationValueMapping/FieldAssociationValueMapping'
 export { default as App} from './App/App'
 export { default as Root} from './Root/Root'
+export { default as EmbedLoginContainer} from './EmbedLoginContainer/EmbedLoginContainer'
+export { default as LoginContainer} from './LoginContainer/LoginContainer'
+export { default as SignupContainer} from './SignupContainer/SignupContainer'
+export { default as SelectProviderField} from './SignupContainer/SelectProviderField'
+export { default as AuthSetup} from './authentication/index'
+export { default as Canvas } from './Canvas/Canvas';

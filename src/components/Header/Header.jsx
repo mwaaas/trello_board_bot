@@ -32,11 +32,11 @@ export default class Header extends Component {
   static propTypes = {
     children: PropTypes.node,
     logoRedirectUrl: PropTypes.string,
-  }
+  };
 
   static defaultProps = {
     logoRedirectUrl: routes.ABSOLUTE_PATHS.SYNCS,
-  }
+  };
 
   render() {
     const { children, logoRedirectUrl } = this.props;

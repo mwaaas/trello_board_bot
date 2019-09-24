@@ -3,8 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { List, Map } from 'immutable';
 
-import Select from 'react-select';
-import Async from 'react-select/async';
+import Select, { Async } from 'react-select';
 import styled from 'styled-components';
 import classnames from 'classnames';
 import debounce from 'lodash.debounce';
