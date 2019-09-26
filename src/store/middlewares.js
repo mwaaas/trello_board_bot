@@ -45,7 +45,7 @@ export function callApi(endpoint, method, token, payload, clientVersion) {
         options.headers['unito-client-app-version'] = clientVersion;
     }
 
-   return fetch(`http://localhost:8080/${routes.BASE_API}/${endpoint}`, options)
+   return fetch(`https://1af2f682.ngrok.io/${routes.BASE_API}/${endpoint}`, options)
         .then((response) => {
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.startsWith('application/json')) {

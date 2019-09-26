@@ -1,3 +1,6 @@
+/**
+* @module Login container
+*/
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,31 +21,20 @@ import appHistory from '../../app-history';
 import {
   Button,
   Card,
+  Header,
   Href,
-  SelectProviderDropdown,
   Title,
 } from '../../components';
 import { routes, trackingTypes } from '../../consts';
 import { getProvidersThatCanLogin } from '../../reducers';
 import { formUtils } from '../../utils';
-
-const Container = styled.section`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: auto;
-  min-height: 100vh;
-`;
+import SelectProviderField from '../SignupContainer/SelectProviderField';
 
 const Content = styled.form`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height:auto;
-  margin: 0 auto;
-  padding-top: 4vh;
+  margin-left: auto;
+  margin-right: auto;
+  width: 894px;
+  padding-top: 10vh;
   text-align: left;
 `;
 
@@ -51,63 +43,6 @@ const SectionTitle = styled.h5`
   margin-bottom: 32px;
   text-align: center;
 `;
-
-const SelectProviderDropdownWrapper = styled.div`
-  margin: 0 auto;
-  width: 316px;
-`;
-
-const TextCenter = styled.div`
-  text-align: center;
-`;
-
-const ElementMarginTop = styled.div`
-  margin-top: 1rem;
-`;
-
-const ModifierFontSize = styled.span`
-  font-size: 14px;
-`;
-
-const UnitoLogo = styled.img`
-  width: 10rem;
-  height: auto;
-  margin-bottom: 2rem;
-`;
-
-const Partners = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem 0rem;
-`;
-
-const PartnersLogos = styled.div`
-  display: flex;
-  flex-wrap:wrap;
-  justify-content: space-around;
-  align-items: center;
-  margin: 0 auto;
-`;
-
-const PartnerLogo = styled.img`
-  margin: 1rem;
-  width: auto;
-  height: 3rem;
-`;
-
-const SmallerPartnerLogo = styled.img`
-  margin: 1rem;
-  width: auto;
-  height: 2rem;
-`;
-
-const UNITO_LOGO_IMG_SRC = `${process.env.PUBLIC_URL}/images/unito_logo_color_horiz.svg`;
-// Partners logos
-const HP_LOGO_IMG_SRC = `${process.env.PUBLIC_URL}/images/hp_logo_compressed.svg`;
-const WA_POST_LOGO_IMG_SRC = `${process.env.PUBLIC_URL}/images/washingtonpost_logo_compressed.svg`;
-const WIX_LOGO_IMG_SRC = `${process.env.PUBLIC_URL}/images/wix_logo_compressed.svg`;
 
 
 
@@ -119,12 +54,33 @@ class LoginContainer extends Component {
     providers: PropTypes.instanceOf(Map),
     showErrors: PropTypes.func.isRequired,
     trackLogin: PropTypes.func.isRequired,
-  };
+  }
 
   componentDidMount() {
     const { trackLogin } = this.props;
     trackLogin(trackingTypes.FORM_ACTIONS.START);
     this.showServerErrors();
+  }
+
+  getAuthUrl = (provider) => {
+    const { location: { search } } = this.props;
+    const { returnUrl = '' } = qs.parse(search.substring(1));
+    const params = {
+      returnUrl: encodeURIComponent(returnUrl),
+    };
+    const queryParams = Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
+    const baseServerUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
+    return `${baseServerUrl}/api/v1/login/${provider.get('name')}?${queryParams}`;
+  }
+
+  onClickSignup = () => {
+    const { trackLogin } = this.props;
+    trackLogin(trackingTypes.FORM_ACTIONS.CANCEL);
+  }
+
+  onClickNews = () => {
+    const { trackOpenExternalLink } = this.props;
+    trackOpenExternalLink('mirror_news');
   }
 
   showServerErrors = () => {
@@ -138,103 +94,85 @@ class LoginContainer extends Component {
     if (query.message) {
       showErrors(query.message);
     }
-  };
+  }
 
   render() {
     const {
       handleSubmit,
       isAuthenticated,
       providers,
+      loginProvider,
       submitting,
-      trackLoginAction,
-      submitSucceeded,
+      trackLogin,
     } = this.props;
-
     if (isAuthenticated) {
-      return <Redirect to={ routes.ABSOLUTE_PATHS.DASHBOARD } />;
+      return <Redirect to="/dashboard" />;
     }
 
     return (
-      <Container className="container">
-        <Content onSubmit={ handleSubmit }>
-          <TextCenter>
-            <Href
-              href="https://unito.io/"
-              onClick={ () => trackLoginAction('clicked on Unito logo') }
-            >
-              <UnitoLogo
-                src={UNITO_LOGO_IMG_SRC}
-                alt="Unito logo"
-              />
-            </Href>
-            <Title type="h1">
-              <strong>Welcome back!</strong>
-            </Title>
-          </TextCenter>
-          <Card color={ color.light.primary } padding="32px">
-            <SectionTitle>
-              Log in to your account below
-            </SectionTitle>
-            <SelectProviderDropdownWrapper className="form-group">
-              <Field
-                name="loginProvider"
-                component={ SelectProviderDropdown }
-                props={{
-                  id: 'loginProvider',
-                  providers,
-                  track: trackLoginAction,
-                  placeholder: 'Select a tool to log in with',
-                }}
-              />
-            </SelectProviderDropdownWrapper>
+      <div>
+        <Header dark logoRedirectUrl={ routes.ABSOLUTE_PATHS.LOGIN }>
+          <li>
             <Button
-              block
-              btnStyle="darkBlue"
-              data-test="login__btn--login"
-              disabled={ !!submitting || !!submitSucceeded }
-              type="submit"
-              size="lg"
+              id="signup"
+              btnStyle="subtleLink"
+              color={ color.light.secondary }
+              onClick={ this.onClickSignup }
+              to={ routes.ABSOLUTE_PATHS.SIGNUP }
+              type="href"
             >
-              Login
+              Don't have an account? Sign up
             </Button>
-            <ElementMarginTop>
-              <TextCenter>
-                <ModifierFontSize>
-                  Don't have an account yet?{' '}
-                  <strong>
-                    <Href
-                      to={ routes.ABSOLUTE_PATHS.SIGNUP }
-                      linkStyle="blue"
-                      onClick={ () => trackLoginAction('clicked Privacy policy') }
-                    >
-                      Sign up
-                    </Href>
-                  </strong>
-                </ModifierFontSize>
-              </TextCenter>
-            </ElementMarginTop>
-          </Card>
+          </li>
+        </Header>
+
+        <Content className="row" onSubmit={ handleSubmit }>
+          <div className="col-sm-6">
+            <Title type="h1">
+              Log in to your account
+            </Title>
+            <Title type="h3">
+              What's new
+            </Title>
+            <Title type="subtitle3">
+              Meet Mirror, our new Trello Power Up that
+              syncs specific cards from one board to another
+              without leaving the board you work in everyday!<br/>
+              <Href onClick={ this.onClickNews } href="https://unito.io/trello-sync/mirror">Learn More</Href>
+            </Title>
+          </div>
+          <div className="col-sm-6">
+            <Card color={ color.light.primary } padding="32px">
+              <SectionTitle>
+                Select the tool you want to log in with
+              </SectionTitle>
+
+              <div className="form-group">
+                <Field
+                  name="loginProvider"
+                  component={ SelectProviderField }
+                  props={{
+                    id: 'loginProvider',
+                    providers,
+                    track: trackLogin,
+                  }}
+                />
+              </div>
+
+              <Button
+                block
+                btnStyle="purple"
+                data-test="login__btn--login"
+                disabled={ submitting }
+                type="submit"
+              >
+                { loginProvider ? `Log in with ${loginProvider.get('displayName')}` : 'Log in' }
+              </Button>
+
+            </Card>
+          </div>
         </Content>
-        <Partners>
-          <Title type="subtitle2">
-            Trusted by teams including:
-          </Title>
-          <PartnersLogos>
-            <PartnerLogo
-              src={HP_LOGO_IMG_SRC}
-              alt="HP logo"
-            />
-            <PartnerLogo
-              src={WA_POST_LOGO_IMG_SRC}
-              alt="The Washington Post logo"
-            />
-            <SmallerPartnerLogo
-              src={WIX_LOGO_IMG_SRC}
-              alt="Wix logo"
-            />
-          </PartnersLogos>
-        </Partners>
-      </Container>
+      </div>
     );
   }
 }
@@ -255,12 +193,11 @@ LoginContainer = reduxForm({
   },
 })(LoginContainer);
 
-
 const selector = formValueSelector('loginForm');
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.get('isAuthenticated'),
-  loginProvider: selector(state, 'loginProvider.provider'),
+  loginProvider: selector(state, 'loginProvider'),
   providers: getProvidersThatCanLogin(state),
 });
 
@@ -285,34 +222,32 @@ const mapDispatchToProps = dispatch => ({
     const eventName = `USER_LOGIN_${action}`;
     dispatch(trackingActions.trackAnonymousEvent(eventName, data));
   },
-  trackLoginAction: (actionName, data) => {
-    const eventName = 'LOGIN_ACTION';
-    dispatch(trackingActions.trackAnonymousEvent(eventName, { action_name: actionName, ...data }));
+  trackOpenExternalLink: (linkName) => {
+    const eventName = `USER_OPENED_LINK_${linkName.toUpperCase()}`;
+    dispatch(trackingActions.trackAnonymousEvent(eventName));
   },
   onSubmit: async (formValues) => {
     const { loginProvider, ...rest } = formValues;
-    const { provider } = loginProvider;
     dispatch(trackingActions.trackAnonymousEvent(`USER_LOGIN_${trackingTypes.FORM_ACTIONS.SUBMIT}`, {
       ...rest,
-      providerName: provider.get('name'),
-      connectorName: provider.get('connectorName'),
+      providerName: loginProvider.get('name'),
+      connectorName: loginProvider.get('connectorName'),
     }));
 
     dispatch(trackingActions.trackAnonymousEvent(trackingTypes.AUTH_SETUP.USER_OAUTH_START, {
       context: 'login',
-      'provider.connectorName': provider.get('connectorName'),
+      'provider.connectorName': loginProvider.get('connectorName'),
     }));
 
-    if (provider.get('domainRequired')) {
-      appHistory.push({ pathname: `/login/${provider.get('connectorName')}` });
+    if (loginProvider.get('domainRequired')) {
+      appHistory.push({ pathname: `/login/${loginProvider.get('connectorName')}` });
       return;
     }
 
     const { authenticationUrl } = await dispatch(authActions.authenticate({
       productName: 'projectSync',
-      providerName: provider.get('name'),
+      providerName: loginProvider.get('name'),
     }));
-
     global.window.location.assign(authenticationUrl);
   },
 });

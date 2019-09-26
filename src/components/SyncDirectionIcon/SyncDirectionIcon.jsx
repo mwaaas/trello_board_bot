@@ -28,7 +28,7 @@ export default class SyncDirectionIcon extends Component {
     }
 
     return 'exchange';
-  }
+  };
 
   render() {
     const { size } = this.props;

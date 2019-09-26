@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import cookie from 'react-cookie';
-
 import { connect } from 'react-redux';
+import cookie from 'react-cookie';
 import { Map } from 'immutable';
 import qs from 'qs';
 
 import {
+  Redirect,
   Route,
   Switch,
   withRouter,
@@ -17,9 +17,8 @@ import {
   flagActions,
   providerActions,
 } from '../../actions';
-
-import { Loading } from '../../components'
-
+import { Dashboard, HeaderContainer } from '../../containers';
+import { Loading, NotFound } from '../../components';
 import {
   getIsLoadingFlags,
   getIsAuthenticated,
@@ -27,11 +26,9 @@ import {
   getIsLoadingApp,
   getIsLoadedProviders,
 } from '../../reducers';
-import DashBoard from "../Dashboard/Dashboard";
 
 
 class App extends Component {
-
   static propTypes = {
     children: PropTypes.node,
     initialFetch: PropTypes.func.isRequired,
@@ -76,20 +73,33 @@ class App extends Component {
       this.setState({ segmentInitialized: true });
     }
   };
+
   render() {
-      const { history, isLoading, isAuthenticated } = this.props;
+    const { history, isLoading, isAuthenticated } = this.props;
+
     return (
-        <div className="content">
-            { isLoading && <Loading /> }
-            <Switch>
-                <Route path="/dashboard" component={DashBoard}/>
-                <Route path="/" component={DashBoard}/>
-            </Switch>
-        </div>
+      <div className="content">
+        { isLoading && <Loading /> }
+
+        <Switch>
+          <Route path="/embed/:embedName/dashboard" component={ Dashboard } />
+          <Route path="/dashboard" component={ Dashboard } />
+          <Redirect exact from="/" to={`/dashboard${history.location.search || ''}`} />
+          {
+            isAuthenticated && (
+              <Route render={() => (
+                <div>
+                  <HeaderContainer />
+                  <NotFound />
+                </div>
+              )} />
+            )
+          }
+        </Switch>
+      </div>
     );
   }
 }
-
 
 const mapStateToProps = state => ({
   isAuthenticated: getIsAuthenticated(state),
@@ -100,7 +110,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, { location }) => ({
   initialFetch: () => {
     dispatch(appActions.getAppConfig());
-    // dispatch(flagActions.getCohortFlags());
+    dispatch(flagActions.getCohortFlags());
     dispatch(providerActions.getProviders());
   },
   parseLocation: () => {
@@ -110,3 +120,8 @@ const mapDispatchToProps = (dispatch, { location }) => ({
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/App/App.jsx

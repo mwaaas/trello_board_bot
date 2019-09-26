@@ -181,6 +181,7 @@ class MultisyncItem extends Component {
       syncsByMultisyncId,
     } = this.props;
     const { showSyncs } = this.state;
+    const rootTerms = providerRoot.getIn(['capabilities', 'terms']);
     const topology = multisync.get('topology');
     const nbSyncs = syncsByMultisyncId.get(multisync.get('_id')) ? syncsByMultisyncId.get(multisync.get('_id')).size : 0;
 
@@ -352,6 +353,3 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(mapStateToProps, mapDispatchToProps)(MultisyncItem);
 
 
-
-// WEBPACK FOOTER //
-// ./src/components/MultisyncItem/MultisyncItem.jsx
