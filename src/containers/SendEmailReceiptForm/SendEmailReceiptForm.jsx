@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { connect } from 'react-redux';
 
-import { organizationActions } from '../../actions';
-import { getCurrentSendEmailReceiptChoice } from '../../reducers';
+import { trackingActions, organizationActions } from '../../actions';
+import { getOrganizationSendEmailReceiptChoice } from '../../reducers';
 import { CheckboxField } from '../../components';
-import { organizationTypes } from '../../consts';
+import { trackingTypes, organizationTypes } from '../../consts';
 
 
 class SendEmailReceiptForm extends Component {
@@ -17,7 +17,13 @@ class SendEmailReceiptForm extends Component {
   };
 
   handleChange = (event, newValue, previousValue, fieldName) => {
-    this.props.onSubmit({ [fieldName]: newValue });
+    const { onSubmit, trackEvent } = this.props;
+    trackEvent(trackingTypes.BILLING_EVENTS.ACTION_NAME, {
+      action_name: newValue
+        ? trackingTypes.BILLING_EVENTS.ACTIONS.ON_SEND_RECEIPT
+        : trackingTypes.BILLING_EVENTS.ACTIONS.OFF_SEND_RECEIPT,
+    });
+    onSubmit({ [fieldName]: newValue });
   }
 
   render() {
@@ -43,13 +49,13 @@ class SendEmailReceiptForm extends Component {
 
 SendEmailReceiptForm = reduxForm({
   form: organizationTypes.EDIT_ORG_SEND_EMAIL_RECEIPT_FORM,
-})(SendEmailReceiptForm)
+})(SendEmailReceiptForm);
 
 const mapStateToProps = (state, ownProps) => {
-  const currentSendEmailReceiptChoice = getCurrentSendEmailReceiptChoice(state, ownProps.organizationId);
+  const orgSendEmailReceiptChoice = getOrganizationSendEmailReceiptChoice(state, ownProps.organizationId);
   return {
     initialValues: {
-      sendEmailReceipt: currentSendEmailReceiptChoice,
+      sendEmailReceipt: orgSendEmailReceiptChoice,
     },
   };
 };
@@ -58,6 +64,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   onSubmit: async (formValues) => {
     dispatch(organizationActions.patchOrganization(ownProps.organizationId, formValues));
   },
+  trackEvent: (...params) =>
+    dispatch(trackingActions.trackEvent(...params)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendEmailReceiptForm);

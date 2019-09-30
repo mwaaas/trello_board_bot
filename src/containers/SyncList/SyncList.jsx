@@ -8,6 +8,8 @@ import { withRouter } from 'react-router-dom';
 import { linkActions, multisyncActions } from '../../actions';
 import {
   Button,
+  Dropdown,
+  DropdownItem,
   Href,
   IconHoverTooltip,
   LinkList,
@@ -16,12 +18,15 @@ import {
   Card,
   MultisyncList,
   Subheading,
+  UsefulLinks,
 } from '../../components';
-import { routes } from '../../consts';
+
+import { routes, trackingTypes } from '../../consts'; // Tracking types for dashboard buttons
 import { SiteAdminContainer, FeatureFlag, FeatureFlagVariant } from '../../containers';
 import {
   getEmbedName,
   getSelectedOrganizationId,
+  getSignupIntentA,
   getSortedSyncsWithoutMultisync,
   getSortedSyncsByMultisyncId,
   getSortedMultisyncs,
@@ -32,6 +37,7 @@ import {
   isUserSiteAdmin,
   isOrganizationAccountSuspended,
 } from '../../reducers';
+import { fontWeight } from '../../theme';
 
 
 const Content = styled.div`
@@ -49,11 +55,29 @@ const ButtonMargin = styled.div`
   margin-right: 1rem;
 `;
 
+const BoldModifier = styled.span`
+  font-weight: ${fontWeight.medium};
+`;
+
+const UsefulLinksWrapper = styled.div`
+  margin-top: 3em;
+`;
+
+const TitleWrapper = styled.div`
+  margin-bottom: 3rem;
+`;
+
+const EmptyStateImg = styled.img`
+  margin-bottom: 1.6rem;
+  width: 250px;
+  height: auto;
+`;
 
 class SyncList extends Component {
   static propTypes = {
     embedName: PropTypes.string.isRequired,
     getLinks: PropTypes.func.isRequired,
+    trackDashboardAction: PropTypes.func.isRequired,
     isLoading: PropTypes.bool.isRequired,
     isSiteAdmin: PropTypes.bool,
     linkList: PropTypes.instanceOf(List).isRequired,
@@ -88,15 +112,39 @@ class SyncList extends Component {
       : { to: routes.ABSOLUTE_PATHS.ORGANIZATIONS };
   }
 
+  getDropdownMenu = () => {
+    const { trackDashboardAction } = this.props;
+    return (
+      <Dropdown
+        alignRight
+        onToggle={ () => trackDashboardAction(trackingTypes.USER_DASHBOARD_EVENTS.ACTIONS.ARROW) }>
+        <DropdownItem
+          to={ routes.ABSOLUTE_PATHS.ADD_LINK }
+          onClick={ () => trackDashboardAction(trackingTypes.USER_DASHBOARD_EVENTS.ACTIONS.ITEM_SYNC) }
+        >
+          <BoldModifier>Sync</BoldModifier> (2 projects)
+        </DropdownItem>
+        <DropdownItem
+          to={ routes.ABSOLUTE_PATHS.ADD_MULTISYNC }
+          onClick={ () => trackDashboardAction(trackingTypes.USER_DASHBOARD_EVENTS.ACTIONS.ITEM_MULTI_SYNC) }
+        >
+          <BoldModifier>Multi-Sync</BoldModifier> (3 or more projects)
+        </DropdownItem>
+      </Dropdown>
+    );
+  }
+
   renderSyncs = () => {
     const {
       isLoading,
       linkList,
       multisyncList,
       embedName,
+      trackDashboardAction,
       syncsByMultisyncId,
       isSiteAdmin,
       userId,
+      orgAccountIsSuspended,
     } = this.props;
 
     if (isLoading) {
@@ -112,17 +160,16 @@ class SyncList extends Component {
 
     if (linkList.isEmpty() && multisyncList.isEmpty()) {
       return (
-        <Card className="link-list link-list--empty text-center">
+        <Card className="link-list text-center">
+          <EmptyStateImg
+            alt=""
+            src={ `${process.env.PUBLIC_URL}/images/empty_state.svg` }
+          />
+          <Title type="h3">
+            Start creating your sync!
+          </Title>
           <Subheading>
-            Don't know where to start? Have a look at our { ' ' }
-            <Href
-              href={ routes.HELP_PATHS.UNITO_HELP_URL }
-              data-test="header__btn--help"
-            >
-              User guide
-            </Href>.
-            <br />
-            Or get started by adding your first sync.
+            Add the projects and customize the information that will sync between them.
           </Subheading>
 
           <FeatureFlag name="onboarding-flow">
@@ -139,27 +186,26 @@ class SyncList extends Component {
               </ButtonMargin>
             </FeatureFlagVariant>
           </FeatureFlag>
-
-          <FeatureFlag name="sync-wizard">
-            <FeatureFlagVariant value={ true }>
-              <Button
-                btnStyle="primary"
-                to={ routes.ABSOLUTE_PATHS.USE_CASES }
-                type="href"
-              >
-                Add sync
-              </Button>
-            </FeatureFlagVariant>
-            <FeatureFlagVariant value={ false }>
-              <Button
-                btnStyle="primary"
-                to={ routes.ABSOLUTE_PATHS.ADD_LINK }
-                type="href"
-              >
-                Add sync
-              </Button>
-            </FeatureFlagVariant>
-          </FeatureFlag>
+          <Button
+            btnStyle="primary"
+            className="dropdown-toggle"
+            data-test="dashboard__btn--addsync"
+            disabled={ orgAccountIsSuspended }
+            to={ routes.ABSOLUTE_PATHS.ADD_LINK }
+            type={ orgAccountIsSuspended ? 'button' : 'href' }
+            onClick={ () => trackDashboardAction(trackingTypes.USER_DASHBOARD_EVENTS.ACTIONS.ADD_SYNC) }
+            dropdown={ this.getDropdownMenu() }
+          >
+            Add sync { ' ' }
+            {
+              orgAccountIsSuspended && (
+                <IconHoverTooltip placement="top">
+                  Your account is suspended.<br />
+                  <Href {...this.getRedirectionProps()}>Subscribe to a plan</Href> to create new syncs.
+                </IconHoverTooltip>
+              )
+            }
+          </Button>
         </Card>
       );
     }
@@ -189,103 +235,82 @@ class SyncList extends Component {
       isSiteAdmin,
       linkList,
       multisyncList,
-      isLoading,
       orgAccountIsSuspended,
-      userFullName,
+      signupIntentA,
+      trackDashboardAction,
     } = this.props;
 
     return (
       <Content className="sync-list container">
-        <FeatureFlag name="sync-wizard">
-          <FeatureFlagVariant value={ true }>
-            <Button
-              btnStyle="primary"
-              data-test="dashboard__btn--addsync"
-              disabled={ orgAccountIsSuspended }
-              pullRight
-              to={ routes.ABSOLUTE_PATHS.USE_CASES }
-              type={ orgAccountIsSuspended ? 'button' : 'href' }
-            >
-              Add sync { ' ' }
-              {
-                orgAccountIsSuspended && (
-                  <IconHoverTooltip placement="top">
-                    Your account is suspended.<br />
-                    <Href {...this.getRedirectionProps()}>Subscribe to a plan</Href> to create new syncs.
-                  </IconHoverTooltip>
-                )
-              }
-            </Button>
-          </FeatureFlagVariant>
-
-          <FeatureFlagVariant value={ false }>
-            <Button
-              btnStyle="primary"
-              data-test="dashboard__btn--addsync"
-              disabled={ orgAccountIsSuspended }
-              pullRight
-              to={ routes.ABSOLUTE_PATHS.ADD_LINK }
-              type={ orgAccountIsSuspended ? 'button' : 'href' }
-            >
-              Add sync { ' ' }
-              {
-                orgAccountIsSuspended
-                  && <IconHoverTooltip placement="top">
-                    Your account is suspended.
-                    <br />
-                    <Href {...this.getRedirectionProps()}>Subscribe to a plan</Href>{' '}
-                    to create new syncs.
-                  </IconHoverTooltip>
-              }
-            </Button>
-          </FeatureFlagVariant>
-        </FeatureFlag>
-
-        <Title type="h1">
-          <strong>Welcome</strong> { userFullName }!
-        </Title>
-
-        {
-          linkList.isEmpty() && multisyncList.isEmpty() && !isLoading && (
-            <Subheading>
-              Don’t know where to start? Have a look at our { ' ' }
-              <Href
-                href={ routes.HELP_PATHS.UNITO_HELP_URL }
-                data-test="header__btn--help"
-              >
-                User guide
-              </Href>.
-            </Subheading>
-          )
-        }
-
-        <SyncItems>
-          <Title type="h2">
+        <TitleWrapper className="row">
+          <Title type="h1" className="col-xs-6">
             Your syncs
           </Title>
+          <div className="col-xs-6">
+            { !(linkList.isEmpty() && multisyncList.isEmpty())
+                && <Button
+                  btnStyle="primary"
+                  data-test="dashboard__btn--addsync"
+                  disabled={ orgAccountIsSuspended }
+                  pullRight
+                  onClick={() => trackDashboardAction(trackingTypes.USER_DASHBOARD_EVENTS.ACTIONS.ADD_SYNC)}
+                  to={ routes.ABSOLUTE_PATHS.ADD_LINK }
+                  type={ orgAccountIsSuspended ? 'button' : 'href' }
+                  dropdown={ this.getDropdownMenu() }
+                >
+                  Add sync { ' ' }
+                  {
+                    orgAccountIsSuspended
+                      && <IconHoverTooltip placement="top">
+                        Your account is suspended.
+                        <br />
+                        <Href {...this.getRedirectionProps()}>Subscribe to a plan</Href>{' '}
+                        to create new syncs.
+                      </IconHoverTooltip>
+                  }
+                </Button>
+            }
+          </div>
+        </TitleWrapper>
 
+        <SyncItems>
           { isSiteAdmin && !embedName && <SiteAdminContainer /> }
 
           { this.renderSyncs() }
-
         </SyncItems>
+
+        {
+          (linkList.isEmpty() && multisyncList.isEmpty())
+            && <UsefulLinksWrapper>
+              <UsefulLinks
+                trackDashboardAction={trackDashboardAction}
+                embedName={embedName}
+                signupIntentA={signupIntentA}
+              />
+            </UsefulLinksWrapper>
+        }
       </Content>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  embedName: getEmbedName(state),
-  isLoading: !isLoadedLinks(state) || !isLoadedMultisyncs(state),
-  isSiteAdmin: isUserSiteAdmin(state),
-  linkList: getSortedSyncsWithoutMultisync(state),
-  syncsByMultisyncId: getSortedSyncsByMultisyncId(state),
-  multisyncList: getSortedMultisyncs(state),
-  orgAccountIsSuspended: isOrganizationAccountSuspended(state),
-  userId: getUserId(state),
-  userFullName: getUserFullName(state),
-  selectedOrganizationId: getSelectedOrganizationId(state),
-});
+const mapStateToProps = (state) => {
+  const selectedOrganizationId = getSelectedOrganizationId(state);
+
+  return {
+    signupIntentA: getSignupIntentA(state),
+    embedName: getEmbedName(state),
+    isLoading: !isLoadedLinks(state) || !isLoadedMultisyncs(state),
+    isSiteAdmin: isUserSiteAdmin(state),
+    linkList: getSortedSyncsWithoutMultisync(state),
+    syncsByMultisyncId: getSortedSyncsByMultisyncId(state),
+    multisyncList: getSortedMultisyncs(state),
+    orgAccountIsSuspended: isOrganizationAccountSuspended(state, selectedOrganizationId),
+    userId: getUserId(state),
+    userFullName: getUserFullName(state),
+    selectedOrganizationId,
+  };
+};
 
 const mapDispatchToProps = dispatch => ({
   getLinks: (embedName) => {

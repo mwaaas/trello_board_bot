@@ -23,18 +23,15 @@ import {
   ConnectorList,
   CreateMultisync,
   EditMultisync,
-  FeatureFlag,
-  FeatureFlagVariant,
   HeaderContainer,
   PeopleContainer,
   PricingContainer,
-  PickUseCase,
   SyncContainer,
   SyncList,
   UserOrgInviteModal,
   WelcomeContainer,
 } from '../../containers';
-import { authTypes, organizationTypes } from '../../consts';
+import { authTypes, trackingTypes, routes } from '../../consts';
 import {
   BlockSyncActiveUsersOverLimit,
   Loading,
@@ -48,14 +45,10 @@ import {
   getFeatureFlagValue,
   getIsAuthenticated,
   getIsAuthenticating,
-  getIsLoadingFlags,
-  getIsLoadingInvites,
-  getIsLoadingOrganizations,
   getUserId,
   getUserKeepInformed,
   getUserPendingInvite,
   getSelectedOrganizationId,
-  isAppConfigLoading,
   isOrganizationOverUserLimit,
   isUserSiteAdmin,
 } from '../../reducers';
@@ -72,31 +65,36 @@ class Dashboard extends Component {
     trackEvent: PropTypes.func.isRequired,
   }
 
-  componentDidMount() {
+  state = {
+    isLoading: true,
+  };
+
+  async componentDidMount() {
     const {
       embedName,
       fetchUserResources,
       isAuthenticated,
     } = this.props;
+
     if (isAuthenticated) {
       fetchUserResources(embedName);
     }
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     const {
       embedName,
-      fetchUserResources,
       fetchOrgResources,
-      isAuthenticated,
+      getPlans,
       organizationId,
     } = this.props;
-    if (!prevProps.isAuthenticated && isAuthenticated) {
-      fetchUserResources(embedName);
-    }
+
     // here we need to check if the user is authenticated otherwise fetchOrgResources will be called during logout
-    if (isAuthenticated && prevProps.organizationId !== organizationId) {
-      fetchOrgResources(embedName);
+    if (organizationId && prevProps.organizationId !== organizationId) {
+      this.setState({ isLoading: true });
+      await fetchOrgResources(embedName);
+      this.setState({ isLoading: false });
+      getPlans();
     }
   }
 
@@ -123,13 +121,17 @@ class Dashboard extends Component {
     );
   }
 
+  trackDashboardAction = (actionName, data) => {
+    const eventName = trackingTypes.USER_DASHBOARD_EVENTS.ACTION_NAME;
+    this.props.trackEvent(eventName, { action_name: actionName, ...data });
+  }
+
   render() {
     const {
       embedName,
       history,
       isAuthenticated,
       isAuthenticating,
-      isLoading,
       isOrgOverUserLimit,
       match,
       organizationId,
@@ -140,10 +142,11 @@ class Dashboard extends Component {
     } = this.props;
 
     if (!isAuthenticated && !isAuthenticating) {
-      return <Redirect to={`/login${history.location.search || ''}`} />;
+      // Our assumption is that we will see more signup errors coming from new users, so we want to redirect to the signup page
+      return <Redirect to={`/login${history.location.search || ''}`} />; // Fix for users who haven't accepted our terms of service
     }
 
-    if (isLoading || isAuthenticating) {
+    if (this.state.isLoading || isAuthenticating) {
       return <Loading />;
     }
 
@@ -155,7 +158,9 @@ class Dashboard extends Component {
 
         <HeaderContainer />
         <Switch>
-          <Route exact path={ `${match.path}/syncs` } component={ SyncList } />
+          <Route exact path={ `${match.path}/syncs` } render={ props => (
+            <SyncList trackDashboardAction={this.trackDashboardAction} {...props} />
+          )} />
           <Route exact path={ `${match.path}/connectors` } component={ ConnectorList } />
           <Route path={ `${match.path}/links` } component={ SyncContainer } />
           { /*
@@ -166,75 +171,49 @@ class Dashboard extends Component {
           <Route
             path={ `${match.path}/multisyncs` }
             render={ ({ match: multisyncMatch }) => (
-              <FeatureFlag name="sync-wizard">
-                <FeatureFlagVariant value={ true }>
-                  <Switch>
-                    <Route path={ `${multisyncMatch.path}/add` } render={ (props) => {
-                      if (isOrgOverUserLimit && ['block-add-sync', 'block-add-edit-sync'].includes(overLimitFlagValue)) {
-                        const eventName = overLimitFlagValue === 'block-add-sync'
-                          ? organizationTypes.EVENTS.USER_CLICKED_UPGRADE_NOW_ADD_SYNC_BLOCKED
-                          : organizationTypes.EVENTS.USER_CLICKED_UPGRADE_NOW_ADD_EDIT_SYNC_BLOCKED;
+            <Switch>
+              <Route path={ `${multisyncMatch.path}/add` } render={ (props) => {
+                if (isOrgOverUserLimit && ['block-add-sync', 'block-add-edit-sync'].includes(overLimitFlagValue)) {
+                  const eventName = overLimitFlagValue === 'block-add-sync'
+                    ? trackingTypes.USER_DROPDOWN_EVENTS.USER_CLICKED_UPGRADE_NOW_ADD_SYNC_BLOCKED
+                    : trackingTypes.USER_DROPDOWN_EVENTS.USER_CLICKED_UPGRADE_NOW_ADD_EDIT_SYNC_BLOCKED;
 
-                        const loadEventName = overLimitFlagValue === 'block-add-sync'
-                          ? organizationTypes.EVENTS.USER_SAW_ADD_SYNC_BLOCKED
-                          : organizationTypes.EVENTS.USER_SAW_ADD_EDIT_SYNC_BLOCKED;
+                  const loadEventName = overLimitFlagValue === 'block-add-sync'
+                    ? trackingTypes.USER_DROPDOWN_EVENTS.USER_SAW_ADD_SYNC_BLOCKED
+                    : trackingTypes.USER_DROPDOWN_EVENTS.USER_SAW_ADD_EDIT_SYNC_BLOCKED;
 
-                        return (
-                          <BlockSyncActiveUsersOverLimit
-                            isEmbed={ !!embedName }
-                            trackLoadEvent={ () => trackEvent(loadEventName) }
-                            trackUpgradeEvent={ () => trackEvent(eventName) }
-                            trackCancelEvent={ () => trackEvent(organizationTypes.EVENTS.USER_CLICKED_BACK_SYNC_BLOCKED) }
-                          >
-                            To unlock the ability to create multisyncs, upgrade your plan!
-                          </BlockSyncActiveUsersOverLimit>
-                        );
-                      }
+                  return (
+                    <BlockSyncActiveUsersOverLimit
+                      isEmbed={ !!embedName }
+                      trackLoadEvent={ () => trackEvent(loadEventName) }
+                      trackUpgradeEvent={ () => trackEvent(eventName) }
+                      trackCancelEvent={ () => trackEvent(trackingTypes.USER_DROPDOWN_EVENTS.USER_CLICKED_BACK_SYNC_BLOCKED) }
+                    >
+                      To unlock the ability to create multisyncs, upgrade your plan!
+                    </BlockSyncActiveUsersOverLimit>
+                  );
+                }
 
-                      return <CreateMultisync {...props} />;
-                    }} />
+                return <CreateMultisync {...props} />;
+              }} />
 
-                    <Route path={ `${multisyncMatch.path}/edit/:multisyncId` } render={ (props) => {
-                      if (isOrgOverUserLimit && overLimitFlagValue === 'block-add-edit-sync') {
-                        return (
-                          <BlockSyncActiveUsersOverLimit
-                            isEmbed={ !!embedName }
-                            trackUpgradeEvent={ () => trackEvent(organizationTypes.EVENTS.USER_CLICKED_UPGRADE_NOW_ADD_EDIT_SYNC_BLOCKED) }
-                            trackCancelEvent={ () => trackEvent(organizationTypes.EVENTS.USER_CLICKED_BACK_SYNC_BLOCKED) }
-                          >
-                            To unlock the ability to edit multisyncs, upgrade your plan!
-                          </BlockSyncActiveUsersOverLimit>
-                        );
-                      }
+              <Route path={ `${multisyncMatch.path}/edit/:multisyncId` } render={ (props) => {
+                if (isOrgOverUserLimit && overLimitFlagValue === 'block-add-edit-sync') {
+                  return (
+                    <BlockSyncActiveUsersOverLimit
+                      isEmbed={ !!embedName }
+                      trackUpgradeEvent={ () => trackEvent(trackingTypes.USER_DROPDOWN_EVENTS.USER_CLICKED_UPGRADE_NOW_ADD_EDIT_SYNC_BLOCKED) }
+                      trackCancelEvent={ () => trackEvent(trackingTypes.USER_DROPDOWN_EVENTS.USER_CLICKED_BACK_SYNC_BLOCKED) }
+                    >
+                      To unlock the ability to edit multisyncs, upgrade your plan!
+                    </BlockSyncActiveUsersOverLimit>
+                  );
+                }
 
-                      return <EditMultisync {...props} />;
-                    }} />
-                    <Route component={ NotFound } />
-                  </Switch>
-                </FeatureFlagVariant>
-                <FeatureFlagVariant value={ false }>
-                  <Route component={ NotFound } />
-                </FeatureFlagVariant>
-              </FeatureFlag>
-            )}
-          />
-
-          <Route
-            path={ `${match.path}/use-cases` }
-            render={ ({ match: pickUseCaseMatch }) => (
-              <FeatureFlag name="sync-wizard">
-                <FeatureFlagVariant value={ true }>
-                  <Switch>
-                    <Route
-                      path={ pickUseCaseMatch.url }
-                      render={ props => <PickUseCase {...props} embedName={ embedName } /> }
-                    />
-                  </Switch>
-                </FeatureFlagVariant>
-                <FeatureFlagVariant value={ false }>
-                  <Route component={ NotFound } />
-                </FeatureFlagVariant>
-              </FeatureFlag>
+                return <EditMultisync {...props} />;
+              }} />
+              <Route component={ NotFound } />
+            </Switch>
             )}
           />
 
@@ -249,37 +228,56 @@ class Dashboard extends Component {
           />
           {
             organizationId
-              && <Route exact path={ `${match.path}/organizations/:organizationId/people` } component={ PeopleContainer } />
+              && <Route
+                exact path={ `${match.path}/organizations/:organizationId/people` }
+                render={ props => <PeopleContainer {...props} /> }
+              />
           }
           {
-            organizationId && <Route path={ `${match.path}/organizations/:organizationId/billing` } component={ BillingContainer } />
+            organizationId
+              && <Route
+                path={ `${match.path}/organizations/:organizationId/billing` }
+                render={ props => <BillingContainer {...props} /> }
+              />
           }
           {
-            organizationId && <Route path={ `${match.path}/organizations/:organizationId/pricing` } component={ PricingContainer } />
+            organizationId
+              && <Route
+                path={ `${match.path}/organizations/:organizationId/pricing` }
+                render={ props => <PricingContainer {...props} /> }
+              />
           }
           <Route exact path={ `${match.path}/welcome` } component={ WelcomeContainer } />
           <Redirect exact from="/dashboard" to="/dashboard/syncs" />
           <Redirect exact from="/embed/:embedName/dashboard" to="/embed/:embedName/dashboard/syncs" />
-          <Route component={ NotFound } />
+          <Route render={() => (
+            <NotFound
+              goBackLink={ routes.ABSOLUTE_PATHS.DASHBOARD }
+              goBackText="Go back to your syncs"
+            />
+          )} />
         </Switch>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  embedName: getEmbedName(state),
-  keepInformed: getUserKeepInformed(state),
-  isSiteAdmin: isUserSiteAdmin(state),
-  isAuthenticated: getIsAuthenticated(state),
-  isAuthenticating: getIsAuthenticating(state),
-  isLoading: isAppConfigLoading(state) || getIsLoadingInvites(state) || getIsLoadingFlags(state) || getIsLoadingOrganizations(state),
-  isOrgOverUserLimit: isOrganizationOverUserLimit(state),
-  overLimitFlagValue: getFeatureFlagValue(state, 'billing-experiment-1-over-user-limit'),
-  organizationId: getSelectedOrganizationId(state),
-  showMaintenance: appIsInMaintenance(state) && !isUserSiteAdmin(state),
-  userPendingInvite: getUserPendingInvite(state),
-});
+const mapStateToProps = (state) => {
+  const organizationId = getSelectedOrganizationId(state);
+
+  return {
+    embedName: getEmbedName(state),
+    keepInformed: getUserKeepInformed(state),
+    isSiteAdmin: isUserSiteAdmin(state),
+    isAuthenticated: getIsAuthenticated(state),
+    isAuthenticating: getIsAuthenticating(state),
+    isOrgOverUserLimit: isOrganizationOverUserLimit(state, organizationId),
+    overLimitFlagValue: getFeatureFlagValue(state, 'billing-experiment-1-over-user-limit'),
+    showMaintenance: appIsInMaintenance(state) && !isUserSiteAdmin(state),
+    userPendingInvite: getUserPendingInvite(state),
+    organizationId,
+  };
+};
 
 const updateUser = ({ keepInformed }) => (dispatch, getState) =>
   dispatch({
@@ -297,18 +295,17 @@ const mapDispatchToProps = dispatch => ({
   fetchUserResources: async () => {
     dispatch(flagActions.getUserFlags());
     dispatch(billingActions.getProducts());
-
+    dispatch(providerIdentityActions.getProviderIdentities());
     await dispatch(organizationActions.getOrganizations());
     dispatch(appActions.setSelectedOrganizationId());
   },
-  fetchOrgResources: async (embedName) => {
-    dispatch(billingActions.getPlans());
-    dispatch(billingActions.getCustomer());
-    dispatch(inviteActions.getUserPendingInvites());
-    embedName !== 'trello' && dispatch(linkActions.getLinks());
-    dispatch(providerIdentityActions.getProviderIdentities());
-    dispatch(organizationActions.getCollaborators());
-  },
+  fetchOrgResources: async embedName => Promise.all([
+    // dispatch(billingActions.getCustomer()),
+    // dispatch(inviteActions.getUserPendingInvites()),
+    embedName !== 'trello' && dispatch(linkActions.getLinks()),
+    // dispatch(organizationActions.getCollaborators()),
+  ]),
+  getPlans: () => dispatch(billingActions.getPlans()),
   acceptMarketingEmails: () => dispatch(updateUser({ keepInformed: true })),
   refuseMarketingEmails: () => dispatch(updateUser({ keepInformed: false })),
   trackEvent: (...params) => {

@@ -17,14 +17,14 @@ import {
   flagActions,
   providerActions,
 } from '../../actions';
-import { Dashboard, HeaderContainer } from '../../containers';
-import { Loading, NotFound } from '../../components';
+import { Dashboard } from '../../containers';
+import { NotFound, Header, Loading } from '../../components';
+import { routes } from '../../consts';
 import {
-  getIsLoadingFlags,
   getIsAuthenticated,
-  getIsAuthenticating,
-  getIsLoadingApp,
-  getIsLoadedProviders,
+  getSegmentWriteKey,
+  getSematextExperienceToken,
+  getUserId,
 } from '../../reducers';
 
 
@@ -33,33 +33,39 @@ class App extends Component {
     children: PropTypes.node,
     initialFetch: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
-    isLoading: PropTypes.bool.isRequired,
     location: PropTypes.object.isRequired,
     parseLocation: PropTypes.func.isRequired,
     segmentWriteKey: PropTypes.string,
+    sematextExperienceToken: PropTypes.string,
+    userId: PropTypes.string,
     userPendingInvite: PropTypes.instanceOf(Map),
   };
 
   state = {
     displayParamErrorMsg: true,
+    isLoading: true,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { initialFetch, location, parseLocation } = this.props;
     const [, embed, providerName] = location.pathname.split('/');
     const isEmbed = embed === 'embed';
 
-    initialFetch();
+    await initialFetch();
+    this.setState({ isLoading: false });
     parseLocation();
 
     // Clear cookie to avoid issue #1401
     if (isEmbed && providerName === 'wrike') {
       window.addEventListener('beforeunload', this.clearCookie);
     }
+
+    this.setupSnippets();
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.loadSegment(nextProps.segmentWriteKey);
+  setupSnippets = async () => {
+    this.loadSegment();
+    this.setupSematextExperience();
   }
 
   clearCookie = () => {
@@ -67,20 +73,32 @@ class App extends Component {
     window.removeEventListener('beforeunload', this.clearCookie);
   }
 
-  loadSegment = (segmentWriteKey) => {
-    if (segmentWriteKey && !this.state.segmentInitialized) {
+  loadSegment = () => {
+    const { segmentWriteKey } = this.props;
+    if (segmentWriteKey) {
       window.analytics.load(segmentWriteKey);
-      this.setState({ segmentInitialized: true });
+    }
+  }
+
+  setupSematextExperience = () => {
+    const { sematextExperienceToken, userId } = this.props;
+    if (window.strum && sematextExperienceToken) {
+      if (userId) {
+        window.strum('identify', { name: userId, identifier: userId });
+      }
+
+      window.strum('config', { token: sematextExperienceToken, receiverUrl: 'https://rum-receiver.sematext.com' });
     }
   }
 
   render() {
-    const { history, isLoading, isAuthenticated } = this.props;
+    const { history, isAuthenticated } = this.props;
+    if (this.state.isLoading) {
+      return <Loading />;
+    }
 
     return (
       <div className="content">
-        { isLoading && <Loading /> }
-
         <Switch>
           <Route path="/embed/:embedName/dashboard" component={ Dashboard } />
           <Route path="/dashboard" component={ Dashboard } />
@@ -89,8 +107,11 @@ class App extends Component {
             isAuthenticated && (
               <Route render={() => (
                 <div>
-                  <HeaderContainer />
-                  <NotFound />
+                  <Header />
+                  <NotFound
+                    goBackLink={ routes.ABSOLUTE_PATHS.DASHBOARD }
+                    goBackText="Go back to your syncs"
+                  />
                 </div>
               )} />
             )
@@ -103,16 +124,17 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: getIsAuthenticated(state),
-  isLoading: getIsLoadingApp(state) || getIsAuthenticating(state) || getIsLoadingFlags(state) || !getIsLoadedProviders(state),
-  segmentWriteKey: state.app.get('segmentWriteKey'),
+  segmentWriteKey: getSegmentWriteKey(state),
+  sematextExperienceToken: getSematextExperienceToken(state),
+  userId: getUserId(state),
 });
 
 const mapDispatchToProps = (dispatch, { location }) => ({
-  initialFetch: () => {
-    dispatch(appActions.getAppConfig());
-    dispatch(flagActions.getCohortFlags());
-    dispatch(providerActions.getProviders());
-  },
+  initialFetch: () => Promise.all([
+    dispatch(appActions.getAppConfig()),
+    dispatch(flagActions.getCohortFlags()),
+    dispatch(providerActions.getProviders()),
+  ]),
   parseLocation: () => {
     dispatch(appActions.getIsEmbed(location.pathname));
     dispatch(appActions.getQueryParameters(qs.parse(location.search.substring(1))));

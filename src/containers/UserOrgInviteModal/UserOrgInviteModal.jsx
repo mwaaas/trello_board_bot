@@ -5,8 +5,6 @@ import { Map } from 'immutable';
 
 import { inviteActions } from '../../actions';
 import { Modal } from '../../components';
-import { isPayingOrganizationLastUser } from '../../reducers';
-
 
 import './UserOrgInviteModal.scss';
 
@@ -15,7 +13,6 @@ class UserOrgInviteModal extends Component {
     acceptInvite: PropTypes.func.isRequired,
     declineInvite: PropTypes.func.isRequired,
     invite: PropTypes.instanceOf(Map),
-    isLastPayingUser: PropTypes.bool.isRequired,
   };
 
   render() {
@@ -23,7 +20,6 @@ class UserOrgInviteModal extends Component {
       acceptInvite,
       declineInvite,
       invite,
-      isLastPayingUser,
     } = this.props;
 
     const invitedBy = invite.getIn(['invitedBy', 'fullName']);
@@ -44,29 +40,11 @@ class UserOrgInviteModal extends Component {
             You have been invited to join <span className="user-org-invite-modal__organization-name">{ organizationName }</span> { ' ' }
             by <span className="user-org-invite-modal__invited-by">{ invitedBy }</span>.
           </p>
-          <p>
-            If you have existing syncs, they will be transferred into the new workspace and will become visible to all of its members.
-          </p>
-          {
-            isLastPayingUser && (
-              <div className="alert alert-warning">
-                Woah there! <br/>
-                Your current workspace has a paid subscription to Unito. <br/>
-                By accepting this invitation, this subscription will be canceled. { ' ' }
-                If this is not what you intended to do, decline this invitation and { ' ' }
-                <a href="mailto:support@unito.io">contact us</a> so we can help you!
-              </div>
-            )
-          }
         </div>
       </Modal>
     );
   }
 }
-
-const mapStateToProps = state => ({
-  isLastPayingUser: isPayingOrganizationLastUser(state),
-});
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   acceptInvite: () => {
@@ -77,7 +55,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserOrgInviteModal);
+export default connect(null, mapDispatchToProps)(UserOrgInviteModal);
 
 
 

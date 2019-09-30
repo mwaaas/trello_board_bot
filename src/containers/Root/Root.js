@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
-import { Route, Router, Switch } from 'react-router-dom';
+import { Provider, connect } from 'react-redux';
+import { Router, Route, Switch } from 'react-router-dom';
 import NotificationsSystem from 'reapop';
 import theme from 'reapop-theme-wybo';
 
@@ -13,19 +13,21 @@ import {
   LoginContainer,
   SignupContainer,
 } from '../../containers';
-import { ScrollToTop } from '../../components';
+import { Header, NotFound, ScrollToTop } from '../../components';
+import { getIsAuthenticated } from '../../reducers';
+import { routes } from '../../consts';
 import DevTools from '../DevTools/DevTools';
 
-export default class Root extends Component {
+class Root extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired,
     debug: PropTypes.bool,
-  };
+  }
 
   static defaultProps = {
     debug: false,
-  };
+  }
 
   renderDevTools() {
     if (!this.props.debug) {
@@ -59,7 +61,7 @@ export default class Root extends Component {
                           {...rest}
                           exact
                           path={[match.path, `${match.path}/`]}
-                          component={match.params.method === 'login' ? LoginContainer : SignupContainer}
+                          component={ match.params.method === 'login' ? LoginContainer : SignupContainer }
                         />
                         <Route
                           {...rest}
@@ -71,13 +73,37 @@ export default class Root extends Component {
                   )}
                 />
                 <Route exact path="/canvas" component={ Canvas } />
+                {
+                  !this.props.isAuthenticated && (
+                    <Route render={() => (
+                      <div>
+                        <Header />
+                        <NotFound
+                          goBackLink={ routes.ABSOLUTE_PATHS.LOGIN }
+                          goBackText="Go back to the Login page"
+                        />
+                      </div>
+                    )} />
+                  )
+                }
               </Switch>
               <App />
             </div>
           </Router>
-          { this.renderDevTools() }
-        </div>
-      </Provider>
+      { this.renderDevTools() }
+    </div>
+  </Provider>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  isAuthenticated: getIsAuthenticated(state),
+});
+
+export default connect(mapStateToProps)(Root);
+
+
+
+// WEBPACK FOOTER //
+// ./src/containers/Root/Root.jsx
