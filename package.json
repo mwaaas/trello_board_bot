@@ -9,7 +9,7 @@
     "copy-to-clipboard": "^3.2.0",
     "immutable": "^3.8.2",
     "jwt-decode": "^2.2.0",
-    "lodash": "^1.3.1",
+    "lodash": "^4.17.19",
     "lodash._getnative": "^3.9.1",
     "moment": "^2.24.0",
     "node-sass": "^4.12.0",
